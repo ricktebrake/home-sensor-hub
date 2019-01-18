@@ -15,25 +15,30 @@ object HomeSensorHub extends App {
   implicit val system = ActorSystem("QuickStart")
   implicit val materializer = ActorMaterializer()
 
+  val sensorManager = system.actorOf(SensorManager.props())
+
   val connectionSettings = MqttConnectionSettings(
     "tcp://test.mosquitto.org:1883", // (1)
     "test-scala-client", // (2)
     new MemoryPersistence // (3)
   )
 
-  val topic = "/#"
+  val mqttTopic = "#"
 
   val mqttSource: Source[MqttMessage, Future[Done]] =
     MqttSource.atMostOnce(
       connectionSettings,
-      MqttSubscriptions(Map(topic -> MqttQoS.AtLeastOnce)),
+      MqttSubscriptions(Map(mqttTopic -> MqttQoS.AtLeastOnce)),
       bufferSize = 8
     )
 
-  mqttSource runForeach(message => println(message.topic + " - " + message.payload.utf8String))
+  val payloadExtractor = Flow[MqttMessage].map(message => message.payload.utf8String)
 
+  val mqqtSink = Sink.actorRef(sensorManager, "stream completed")
 
+  val flow = mqttSource via payloadExtractor to mqqtSink
 
+  flow.run()
 
 
 

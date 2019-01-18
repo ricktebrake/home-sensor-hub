@@ -16,28 +16,25 @@ object HomeSensorHub extends App {
   implicit val materializer = ActorMaterializer()
 
   val connectionSettings = MqttConnectionSettings(
-    "tcp://localhost:1883", // (1)
+    "tcp://test.mosquitto.org:1883", // (1)
     "test-scala-client", // (2)
     new MemoryPersistence // (3)
   )
 
-  val topic = "test/device"
+  val topic = "/#"
 
   val mqttSource: Source[MqttMessage, Future[Done]] =
     MqttSource.atMostOnce(
-      connectionSettings.withClientId(clientId = "test-control"),
+      connectionSettings,
       MqttSubscriptions(Map(topic -> MqttQoS.AtLeastOnce)),
       bufferSize = 8
     )
 
-mqttSource.map(m => m.payload.utf8String).
+  mqttSource runForeach(message => println(message.topic + " - " + message.payload.utf8String))
 
 
-  val sink: Sink[MqttMessage, Future[Done]] =
-    MqttSink(connectionSettings, MqttQoS.AtLeastOnce)
-  private val value: Future[Done] = mqttSource.runWith(sink)
 
-  value.onComplete(_ => system.terminate())
+
 
 
 }

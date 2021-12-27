@@ -10,6 +10,12 @@ variable "zone" {
   default     = "europe-west1-b"
 }
 
+variable "gcp-credentials" {
+  type =  string
+  description = "Google Cloud credentials"
+  default = ""
+}
+
 
 terraform {
   required_providers {

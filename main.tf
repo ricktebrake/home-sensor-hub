@@ -21,7 +21,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = file("home-sensor-hub-credentials.json")
+  credentials = var.gcp-credentials
   project     = "home-sensor-hub"
   region      = var.region
   zone        = var.zone

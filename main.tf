@@ -91,7 +91,7 @@ resource "google_cloudiot_device" "esp-test-device" {
   registry = google_cloudiot_registry.sensor-registry.id
   credentials {
     public_key {
-      format = "ES256"
+      format = "ES256_PEM"
       key    = file("config/ec_public.pem")
     }
   }

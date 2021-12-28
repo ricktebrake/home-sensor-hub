@@ -11,9 +11,15 @@ variable "zone" {
 }
 
 variable "gcp-credentials" {
-  type =  string
+  type        = string
   description = "Google Cloud credentials"
-  default = ""
+  default     = ""
+}
+
+variable "cloudiot-certificate" {
+  type        = string
+  description = "Cloud IOT Public Key Certificate"
+  default     = ""
 }
 
 
@@ -38,4 +44,27 @@ resource "google_container_cluster" "primary" {
   location           = var.region
   enable_autopilot   = true
   initial_node_count = 1
+}
+
+resource "google_pubsub_topic" "devicestatus" {
+  name = "devicestatus"
+}
+
+resource "google_pubsub_topic" "telemetry" {
+  name = "telemetry"
+}
+
+resource "google_cloudiot_registry" "sensor-registry" {
+  name = "sensor-registry"
+  mqtt_config = {
+    mqtt_enabled_state = "MQTT_ENABLED"
+  }
+  event_notification_configs {
+    pubsub_topic_name = google_pubsub_topic.telemetry.id
+    subfolder_matches = ""
+  }
+
+  state_notification_config = {
+    pubsub_topic_name = google_pubsub_topic.devicestatus.id
+  }
 }

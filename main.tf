@@ -71,4 +71,6 @@ resource "google_cloudiot_registry" "sensor-registry" {
   state_notification_config = {
     pubsub_topic_name = google_pubsub_topic.devicestatus.id
   }
+
+  log_level = "INFO"
 }

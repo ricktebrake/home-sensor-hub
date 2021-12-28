@@ -59,6 +59,10 @@ resource "google_cloudiot_registry" "sensor-registry" {
   mqtt_config = {
     mqtt_enabled_state = "MQTT_ENABLED"
   }
+
+  http_config = {
+    http_enabled_state = "HTTP_DISABLED"
+  }
   event_notification_configs {
     pubsub_topic_name = google_pubsub_topic.telemetry.id
     subfolder_matches = ""

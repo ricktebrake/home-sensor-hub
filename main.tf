@@ -74,3 +74,8 @@ resource "google_cloudiot_registry" "sensor-registry" {
 
   log_level = "INFO"
 }
+
+resource "google_cloudiot_device" "test-device" {
+  name="test-device"
+  registry = google_cloudiot_registry.sensor-registry.id
+}

@@ -78,4 +78,10 @@ resource "google_cloudiot_registry" "sensor-registry" {
 resource "google_cloudiot_device" "test-device" {
   name="test-device"
   registry = google_cloudiot_registry.sensor-registry.id
+  credentials {
+    public_key {
+      format = "RSA_PEM"
+      key    = file("config/rsa_public.pem")
+    }
+  }
 }

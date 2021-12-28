@@ -85,3 +85,14 @@ resource "google_cloudiot_device" "test-device" {
     }
   }
 }
+
+resource "google_cloudiot_device" "esp-test-device" {
+  name="esp-test-device"
+  registry = google_cloudiot_registry.sensor-registry.id
+  credentials {
+    public_key {
+      format = "ES256"
+      key    = file("config/ec_public.pem")
+    }
+  }
+}

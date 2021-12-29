@@ -120,3 +120,16 @@ resource "google_cloudfunctions_function" "process-sensor-telemetry" {
   available_memory_mb = 128
 
 }
+
+module "gh_oidc" {
+  source      = "terraform-google-modules/github-actions-runners/google//modules/gh-oidc"
+  project_id  = "home-sensor-hub"
+  pool_id     = "github"
+  provider_id = "github-provider"
+  sa_mapping = {
+    "github_service_account" = {
+      sa_name   = "projects/home-sensor-hub/serviceAccounts/github@home-sensor-hub.iam.gserviceaccount.com"
+      attribute = "attribute.repository/ricktebrake/home-sensor-hub"
+    }
+  }
+}

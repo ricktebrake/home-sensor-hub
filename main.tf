@@ -99,6 +99,7 @@ resource "google_cloudiot_device" "esp-test-device" {
 
 resource "google_storage_bucket" "function_artifacts" {
   name = "function_artifacts"
+  location = "EUROPE-WEST1"
 }
 
 resource "google_storage_bucket_object" "archive" {

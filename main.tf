@@ -140,7 +140,7 @@ resource "google_iam_workload_identity_pool_provider" "main" {
   provider                           = "google-beta"
   project                            = var.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_identity_pool.workload_identity_pool_id
-  workload_identity_pool_provider_id = "github_provider"
+  workload_identity_pool_provider_id = "github-provider"
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
   }

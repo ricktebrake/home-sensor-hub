@@ -45,6 +45,13 @@ provider "google" {
   zone        = var.zone
 }
 
+provider "google-beta" {
+  credentials = var.gcp-credentials
+  project     = "home-sensor-hub"
+  region      = var.region
+  zone        = var.zone
+}
+
 resource "google_container_cluster" "primary" {
   name               = "home-sensor-hub-cluster"
   location           = var.region

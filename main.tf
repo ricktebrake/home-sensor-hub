@@ -23,9 +23,9 @@ variable "cloudiot-certificate" {
 }
 
 variable "project_id" {
-  type = string
+  type        = string
   description = "Google Cloud project id"
-  default="home-sensor-hub"
+  default     = "home-sensor-hub"
 }
 
 
@@ -82,7 +82,7 @@ resource "google_cloudiot_registry" "sensor-registry" {
 }
 
 resource "google_cloudiot_device" "test-device" {
-  name="test-device"
+  name     = "test-device"
   registry = google_cloudiot_registry.sensor-registry.id
   credentials {
     public_key {
@@ -93,7 +93,7 @@ resource "google_cloudiot_device" "test-device" {
 }
 
 resource "google_cloudiot_device" "esp-test-device" {
-  name="esp-test-device"
+  name     = "esp-test-device"
   registry = google_cloudiot_registry.sensor-registry.id
   credentials {
     public_key {
@@ -104,14 +104,14 @@ resource "google_cloudiot_device" "esp-test-device" {
 }
 
 resource "google_storage_bucket" "function_artifacts" {
-  name = "function_artifacts"
+  name     = "function_artifacts"
   location = "EUROPE-WEST1"
 }
 
 resource "google_cloudfunctions_function" "process-sensor-telemetry" {
-  name="process-sensor-telemetry"
-  description ="Processes telemetry data from IoT devices"
-  runtime = "go116"
+  name                  = "process-sensor-telemetry"
+  description           = "Processes telemetry data from IoT devices"
+  runtime               = "go116"
   source_archive_bucket = google_storage_bucket.function_artifacts.name
   source_archive_object = "process-telemetry.zip"
 
@@ -120,7 +120,7 @@ resource "google_cloudfunctions_function" "process-sensor-telemetry" {
     resource   = google_pubsub_topic.telemetry.name
   }
 
-  timeout = 100
+  timeout     = 100
   entry_point = "process_telemetry"
 
   available_memory_mb = 128
@@ -128,21 +128,21 @@ resource "google_cloudfunctions_function" "process-sensor-telemetry" {
 }
 
 resource "google_iam_workload_identity_pool" "github_identity_pool" {
-  provider = "google-beta"
+  provider                  = "google-beta"
   project                   = var.project_id
-  workload_identity_pool_id = github
-  display_name              = github
-  description               = github
+  workload_identity_pool_id = "github"
+  display_name              = "github"
+  description               = "github"
   disabled                  = false
 }
 
 resource "google_iam_workload_identity_pool_provider" "main" {
-  provider = "google-beta"
+  provider                           = "google-beta"
   project                            = var.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_identity_pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "github_provider"
   oidc {
-    issuer_uri        = "https://token.actions.githubusercontent.com"
+    issuer_uri = "https://token.actions.githubusercontent.com"
   }
 }
 

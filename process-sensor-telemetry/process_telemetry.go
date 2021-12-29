@@ -1,4 +1,4 @@
-package main
+package process_sensor_telemetry
 
 import(
 	"context"

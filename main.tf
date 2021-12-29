@@ -31,14 +31,14 @@ variable "project_id" {
 
 terraform {
   required_providers {
-    google = {
-      source  = "hashicorp/google"
+    google-beta = {
+      source  = "hashicorp/google-beta"
       version = "4.3.0"
     }
   }
 }
 
-provider "google" {
+provider "google-beta" {
   credentials = var.gcp-credentials
   project     = "home-sensor-hub"
   region      = var.region

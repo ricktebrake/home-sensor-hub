@@ -102,18 +102,12 @@ resource "google_storage_bucket" "function_artifacts" {
   location = "EUROPE-WEST1"
 }
 
-resource "google_storage_bucket_object" "archive" {
-  name   = "process-sensor-telemtry.zip"
-  bucket = "${google_storage_bucket.function_artifacts.name}"
-  source = "./function/process-sensor-telemetry.zip"
-}
-
 resource "google_cloudfunctions_function" "process-sensor-telemetry" {
   name="process-sensor-telemetry"
   description ="Processes telemetry data from IoT devices"
   runtime = "go116"
   source_archive_bucket = google_storage_bucket.function_artifacts.name
-  source_archive_object = google_storage_bucket_object.archive.name
+  source_archive_object = "process-telemetry.zip"
 
   event_trigger {
     event_type = "providers/cloud.pubsub/eventTypes/topic.publish"

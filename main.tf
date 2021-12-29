@@ -31,14 +31,14 @@ variable "project_id" {
 
 terraform {
   required_providers {
-    google-beta = {
-      source  = "hashicorp/google-beta"
+    google = {
+      source  = "hashicorp/google"
       version = "4.3.0"
     }
   }
 }
 
-provider "google-beta" {
+provider "google" {
   credentials = var.gcp-credentials
   project     = "home-sensor-hub"
   region      = var.region
@@ -128,6 +128,7 @@ resource "google_cloudfunctions_function" "process-sensor-telemetry" {
 }
 
 resource "google_iam_workload_identity_pool" "github_identity_pool" {
+  provider = "google-beta"
   project                   = var.project_id
   workload_identity_pool_id = github
   display_name              = github
@@ -136,6 +137,7 @@ resource "google_iam_workload_identity_pool" "github_identity_pool" {
 }
 
 resource "google_iam_workload_identity_pool_provider" "main" {
+  provider = "google-beta"
   project                            = var.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_identity_pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "github_provider"

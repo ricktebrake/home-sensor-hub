@@ -145,7 +145,7 @@ resource "google_cloudfunctions_function" "process-sensor-telemetry" {
   }
 
   timeout     = 100
-  entry_point = "process_telemetry"
+  entry_point = "ProcessTelemetry"
 
   available_memory_mb = 128
 

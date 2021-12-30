@@ -27,6 +27,11 @@ variable "project_id" {
   description = "Google Cloud project id"
   default     = "home-sensor-hub"
 }
+variable "project_number" {
+  type = string
+  description = "Google Cloud project number"
+  default = "588483809961"
+}
 
 
 terraform {
@@ -159,5 +164,5 @@ resource "google_iam_workload_identity_pool_provider" "main" {
 resource "google_service_account_iam_member" "wif-sa" {
   service_account_id = "projects/${var.project_id}/serviceAccounts/github@${var.project_id}.iam.gserviceaccount.com"
   role               = "roles/iam.workloadIdentityUser"
-  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_identity_pool.workload_identity_pool_id}/attribute.repository/ricktebrake/${var.project_id}"
+  member             = "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_identity_pool.workload_identity_pool_id}/attribute.repository/ricktebrake/${var.project_id}"
 }

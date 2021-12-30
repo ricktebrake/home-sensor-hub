@@ -45,14 +45,14 @@ terraform {
 
 provider "google" {
   credentials = var.gcp-credentials
-  project     = "var.project_id"
+  project     = var.project_id
   region      = var.region
   zone        = var.zone
 }
 
 provider "google-beta" {
   credentials = var.gcp-credentials
-  project     = "var.project_id"
+  project     = var.project_id
   region      = var.region
   zone        = var.zone
 }

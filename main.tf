@@ -115,23 +115,30 @@ resource "google_storage_bucket" "function_artifacts" {
   location = "EUROPE-WEST1"
 }
 
-resource "google_cloudfunctions_function" "process-sensor-telemetry" {
-  name                  = "process-sensor-telemetry"
-  description           = "Processes telemetry data from IoT devices"
-  runtime               = "go116"
-  #source_archive_bucket = google_storage_bucket.function_artifacts.name
-  #source_archive_object = "process-telemetry.zip"
+#resource "google_cloudfunctions_function" "process-sensor-telemetry" {
+#  name                  = "process-sensor-telemetry"
+#  description           = "Processes telemetry data from IoT devices"
+#  runtime               = "go116"
+#  source_archive_bucket = google_storage_bucket.function_artifacts.name
+#  source_archive_object = "process-telemetry.zip"
+#
+#  event_trigger {
+#    event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
+#    resource   = google_pubsub_topic.telemetry.name
+#  }
+#
+#  timeout     = 100
+#  entry_point = "process_telemetry"
+#
+#  available_memory_mb = 128
+#
+#}
 
-  event_trigger {
-    event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
-    resource   = google_pubsub_topic.telemetry.name
-  }
-
-  timeout     = 100
-  entry_point = "process_telemetry"
-
-  available_memory_mb = 128
-
+resource "google_iam_workload_identity_pool" "github_identity_pool" {
+  provider                  = google-beta
+  project                   = var.project_id
+  workload_identity_pool_id = "github2"
+  disabled                  = false
 }
 
 resource "google_iam_workload_identity_pool_provider" "main" {
@@ -139,20 +146,18 @@ resource "google_iam_workload_identity_pool_provider" "main" {
   project                            = var.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_identity_pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "github-provider"
+  attribute_mapping = {
+    "google.subject"       = "assertion.sub"
+    "attribute.actor"      = "assertion.actor"
+    "attribute.repository" = "assertion.repository"
+  }
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
   }
 }
 
-resource "google_iam_workload_identity_pool" "github_identity_pool" {
-  provider                  = google-beta
-  project                   = var.project_id
-  workload_identity_pool_id = "github"
-  disabled                  = false
-}
-
 resource "google_service_account_iam_member" "wif-sa" {
   service_account_id = "projects/${var.project_id}/serviceAccounts/github@${var.project_id}.iam.gserviceaccount.com"
   role               = "roles/iam.workloadIdentityUser"
-  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_identity_pool.name}/attribute.repository/ricktebrake/${var.project_id}"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_identity_pool.id}/attribute.repository/ricktebrake/${var.project_id}"
 }

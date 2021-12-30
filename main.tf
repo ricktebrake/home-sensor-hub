@@ -40,14 +40,14 @@ terraform {
 
 provider "google" {
   credentials = var.gcp-credentials
-  project     = "home-sensor-hub"
+  project     = "var.project_id"
   region      = var.region
   zone        = var.zone
 }
 
 provider "google-beta" {
   credentials = var.gcp-credentials
-  project     = "home-sensor-hub"
+  project     = "var.project_id"
   region      = var.region
   zone        = var.zone
 }
@@ -119,8 +119,8 @@ resource "google_cloudfunctions_function" "process-sensor-telemetry" {
   name                  = "process-sensor-telemetry"
   description           = "Processes telemetry data from IoT devices"
   runtime               = "go116"
-  source_archive_bucket = google_storage_bucket.function_artifacts.name
-  source_archive_object = "process-telemetry.zip"
+  #source_archive_bucket = google_storage_bucket.function_artifacts.name
+  #source_archive_object = "process-telemetry.zip"
 
   event_trigger {
     event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
@@ -134,17 +134,8 @@ resource "google_cloudfunctions_function" "process-sensor-telemetry" {
 
 }
 
-resource "google_iam_workload_identity_pool" "github_identity_pool" {
-  provider                  = "google-beta"
-  project                   = var.project_id
-  workload_identity_pool_id = "github"
-  display_name              = "github"
-  description               = "github"
-  disabled                  = false
-}
-
 resource "google_iam_workload_identity_pool_provider" "main" {
-  provider                           = "google-beta"
+  provider                           = google-beta
   project                            = var.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_identity_pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "github-provider"
@@ -153,8 +144,15 @@ resource "google_iam_workload_identity_pool_provider" "main" {
   }
 }
 
+resource "google_iam_workload_identity_pool" "github_identity_pool" {
+  provider                  = google-beta
+  project                   = var.project_id
+  workload_identity_pool_id = "github"
+  disabled                  = false
+}
+
 resource "google_service_account_iam_member" "wif-sa" {
-  service_account_id = "projects/home-sensor-hub/serviceAccounts/github@home-sensor-hub.iam.gserviceaccount.com"
+  service_account_id = "projects/${var.project_id}/serviceAccounts/github@${var.project_id}.iam.gserviceaccount.com"
   role               = "roles/iam.workloadIdentityUser"
-  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_identity_pool.name}/attribute.repository/ricktebrake/home-sensor-hub"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_identity_pool.name}/attribute.repository/ricktebrake/${var.project_id}"
 }

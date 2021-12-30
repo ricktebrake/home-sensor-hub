@@ -125,7 +125,7 @@ resource "google_cloudfunctions_function" "process-sensor-telemetry" {
   description           = "Processes telemetry data from IoT devices"
   runtime               = "go116"
   source_archive_bucket = google_storage_bucket.function_artifacts.name
-  source_archive_object = "process-telemetry.zip"
+  source_archive_object = "process-sensor-telemetry.zip"
 
   event_trigger {
     event_type = "providers/cloud.pubsub/eventTypes/topic.publish"

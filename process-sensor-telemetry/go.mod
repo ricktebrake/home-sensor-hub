@@ -1,3 +1,0 @@
-module process-sensor-telemetry
-
-go 1.16

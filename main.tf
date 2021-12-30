@@ -120,24 +120,24 @@ resource "google_storage_bucket" "function_artifacts" {
   location = "EUROPE-WEST1"
 }
 
-#resource "google_cloudfunctions_function" "process-sensor-telemetry" {
-#  name                  = "process-sensor-telemetry"
-#  description           = "Processes telemetry data from IoT devices"
-#  runtime               = "go116"
-#  source_archive_bucket = google_storage_bucket.function_artifacts.name
-#  source_archive_object = "process-telemetry.zip"
-#
-#  event_trigger {
-#    event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
-#    resource   = google_pubsub_topic.telemetry.name
-#  }
-#
-#  timeout     = 100
-#  entry_point = "process_telemetry"
-#
-#  available_memory_mb = 128
-#
-#}
+resource "google_cloudfunctions_function" "process-sensor-telemetry" {
+  name                  = "process-sensor-telemetry"
+  description           = "Processes telemetry data from IoT devices"
+  runtime               = "go116"
+  source_archive_bucket = google_storage_bucket.function_artifacts.name
+  source_archive_object = "process-telemetry.zip"
+
+  event_trigger {
+    event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
+    resource   = google_pubsub_topic.telemetry.name
+  }
+
+  timeout     = 100
+  entry_point = "process_telemetry"
+
+  available_memory_mb = 128
+
+}
 
 resource "google_iam_workload_identity_pool" "github_identity_pool" {
   provider                  = google-beta

@@ -5,6 +5,7 @@ go 1.16
 require (
 	firebase.google.com/go v3.13.0+incompatible
 	google.golang.org/api v0.63.0
+	cloud.google.com/go/functions v1.0.0
 )
 
 require (

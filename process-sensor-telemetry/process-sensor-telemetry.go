@@ -38,7 +38,3 @@ func ProcessTelemetry(ctx context.Context, m PubSubMessage) error {
 
 	return nil
 }
-
-func handleError(err error) {
-
-}

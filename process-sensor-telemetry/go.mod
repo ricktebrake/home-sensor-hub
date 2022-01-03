@@ -1,6 +1,6 @@
 module process_sensor_telemetry
 
-go 1.17
+go 1.16
 
 require (
 	firebase.google.com/go v3.13.0+incompatible

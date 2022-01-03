@@ -17,13 +17,13 @@ var client *firestore.Client
 
 func init() {
 	conf := &firebase.Config{ProjectID: "home-sensor-hub"}
-	app, err := firebase.NewApp(ctx, conf)
+	app, err := firebase.NewApp(context.Background(), conf)
 
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	client, err := app.Firestore(ctx)
+	client, err := app.Firestore(context.Background())
 	if err != nil {
 		log.Fatalln(err)
 	}

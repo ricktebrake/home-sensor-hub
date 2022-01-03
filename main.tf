@@ -115,42 +115,6 @@ resource "google_cloudiot_device" "esp-test-device" {
   }
 }
 
-data "archive_file" "process_sensor_telemetry_zip" {
-  type="zip"
-  source_dir = "./process-sensor-telemetry"
-  output_path = "./process-sensor-telemetry.zip"
-}
-
-resource "google_storage_bucket" "function_artifacts" {
-  name     = "function_artifacts"
-  location = "EUROPE-WEST1"
-}
-
-resource "google_storage_bucket_object" "process-sensor-telemetry_zip" {
-  bucket = google_storage_bucket.function_artifacts.name
-  name   = "process-sensor-telemetry.zip"
-  source = data.archive_file.process_sensor_telemetry_zip.output_path
-}
-
-resource "google_cloudfunctions_function" "process-sensor-telemetry" {
-  name                  = "process-sensor-telemetry"
-  description           = "Processes telemetry data from IoT devices"
-  runtime               = "go116"
-  source_archive_bucket = google_storage_bucket.function_artifacts.name
-  source_archive_object = "process-sensor-telemetry.zip"
-
-  event_trigger {
-    event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
-    resource   = google_pubsub_topic.telemetry.name
-  }
-
-  timeout     = 100
-  entry_point = "ProcessTelemetry"
-
-  available_memory_mb = 128
-
-}
-
 resource "google_iam_workload_identity_pool" "github_identity_pool" {
   provider                  = google-beta
   project                   = var.project_id

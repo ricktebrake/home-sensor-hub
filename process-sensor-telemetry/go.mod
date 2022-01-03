@@ -1,4 +1,4 @@
-module process_sensor_telemetry
+module ricktebrake.nl/process_sensor_telemetry
 
 go 1.16
 

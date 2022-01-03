@@ -34,6 +34,6 @@ jobs:
           entrypoint: 'ProcessTelemetry'
           memory_mb: 128
           source_dir: 'process-sensor-telemetry'
-          event_trugger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
+          event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
           event_trigger_resource: 'telemetry'
 

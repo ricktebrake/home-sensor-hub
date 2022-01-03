@@ -26,14 +26,9 @@ jobs:
           workload_identity_provider: 'projects/588483809961/locations/global/workloadIdentityPools/github2/providers/github-provider'
           service_account: 'github@home-sensor-hub.iam.gserviceaccount.com'
 
-      - id: 'deploy'
-        uses: 'google-github-actions/deploy-cloud-functions@v0'
-        with:
-          name: 'process-sensor-telemetry'
-          runtime: 'go116'
-          entrypoint: 'ProcessTelemetry'
-          memory_mb: 128
-          source_dir: 'process-sensor-telemetry'
-          event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
-          event_trigger_resource: 'projects/home-sensor-hub/topics/telemetry'
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v0'
+
+      - name: 'deploy function'
+        run:  'cd process-sensor-telemetry && gcloud functions deploy process-sensor-telemetry --region=europe=west1 --entry-point=ProcessTelemetry --runtime=go116 --trigger-topic=telemetry --memory=128MB'
 

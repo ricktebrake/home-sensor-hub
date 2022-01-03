@@ -31,7 +31,7 @@ jobs:
         with:
           name: 'process-sensor-telemetry'
           runtime: 'go116'
-          entrypoint: 'process_sensor_telemetry.ProcessTelemetry'
+          entrypoint: 'ProcessTelemetry'
           memory_mb: 128
           source_dir: 'process-sensor-telemetry'
           event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'

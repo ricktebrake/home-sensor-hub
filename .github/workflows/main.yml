@@ -35,5 +35,5 @@ jobs:
           memory_mb: 128
           source_dir: 'process-sensor-telemetry'
           event_trigger_type: 'providers/cloud.pubsub/eventTypes/topic.publish'
-          event_trigger_resource: 'telemetry'
+          event_trigger_resource: 'projects/home-sensor-hub/topics/telemetry'
 

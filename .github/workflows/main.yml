@@ -3,6 +3,8 @@ name: Deploy Process Sensor Telemetry Function
 on:
   push:
     branches: [ master ]
+    paths:
+      - process-sensor-telemetry/**
   pull_request:
     branches: [ master ]
 

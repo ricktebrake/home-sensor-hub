@@ -1,6 +1,7 @@
 package process_sensor_telemetry
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	firebase "firebase.google.com/go"
 	"log"
@@ -12,12 +13,9 @@ type PubSubMessage struct {
 	Attributes map[string]string `json:"attributes"`
 }
 
-func ProcessTelemetry(ctx context.Context, m PubSubMessage) error {
-	log.Printf("%s", m.Data)
-	for key, value := range m.Attributes {
-		log.Println("Key:", key, "Value:", value)
-	}
+var client *firestore.Client
 
+func init() {
 	conf := &firebase.Config{ProjectID: "home-sensor-hub"}
 	app, err := firebase.NewApp(ctx, conf)
 
@@ -29,16 +27,19 @@ func ProcessTelemetry(ctx context.Context, m PubSubMessage) error {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
 
+func ProcessTelemetry(ctx context.Context, m PubSubMessage) error {
+	log.Printf("%s", m.Data)
+	for key, value := range m.Attributes {
+		log.Println("Key:", key, "Value:", value)
+	}
 	_, _, insertError := client.Collection("moisture-sensor").Add(ctx, map[string]interface{}{
 		"timestamp": time.Now(),
 		"value":     string(m.Data),
 	})
 	if insertError != nil {
-		log.Fatalln(err)
+		log.Fatalln(insertError)
 	}
-
-	defer client.Close()
-
 	return nil
 }

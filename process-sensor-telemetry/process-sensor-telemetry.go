@@ -36,10 +36,15 @@ func ProcessTelemetry(ctx context.Context, m PubSubMessage) error {
 	for key, value := range m.Attributes {
 		log.Println("Key:", key, "Value:", value)
 	}
+	sensorValue, err := strconv.Atoi(string(m.Data))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	_, _, insertError := fireStoreClient.Collection("moisture-sensor").Add(ctx, map[string]interface{}{
 		"timestamp": time.Now(),
 		"deviceId":  m.Attributes["deviceId"],
-		"value":     strconv.Atoi(string(m.Data)),
+		"value":     sensorValue,
 	})
 	if insertError != nil {
 		log.Fatalln(insertError)

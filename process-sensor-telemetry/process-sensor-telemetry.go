@@ -5,6 +5,7 @@ import (
 	"context"
 	firebase "firebase.google.com/go"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -37,7 +38,8 @@ func ProcessTelemetry(ctx context.Context, m PubSubMessage) error {
 	}
 	_, _, insertError := fireStoreClient.Collection("moisture-sensor").Add(ctx, map[string]interface{}{
 		"timestamp": time.Now(),
-		"value":     string(m.Data),
+		"deviceId":  m.Attributes["deviceId"],
+		"value":     strconv.Atoi(string(m.Data)),
 	})
 	if insertError != nil {
 		log.Fatalln(insertError)

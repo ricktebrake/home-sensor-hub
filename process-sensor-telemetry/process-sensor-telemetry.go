@@ -13,7 +13,7 @@ type PubSubMessage struct {
 	Attributes map[string]string `json:"attributes"`
 }
 
-var client *firestore.Client
+var fireStoreClient *firestore.Client
 
 func init() {
 	conf := &firebase.Config{ProjectID: "home-sensor-hub"}
@@ -27,6 +27,7 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	fireStoreClient = client
 }
 
 func ProcessTelemetry(ctx context.Context, m PubSubMessage) error {
@@ -34,7 +35,7 @@ func ProcessTelemetry(ctx context.Context, m PubSubMessage) error {
 	for key, value := range m.Attributes {
 		log.Println("Key:", key, "Value:", value)
 	}
-	_, _, insertError := client.Collection("moisture-sensor").Add(ctx, map[string]interface{}{
+	_, _, insertError := fireStoreClient.Collection("moisture-sensor").Add(ctx, map[string]interface{}{
 		"timestamp": time.Now(),
 		"value":     string(m.Data),
 	})

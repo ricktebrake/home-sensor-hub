@@ -62,6 +62,9 @@ resource "google_container_cluster" "primary" {
   location           = var.region
   enable_autopilot   = true
   initial_node_count = 1
+  vertical_pod_autoscaling {
+    enabled = false
+  }
 }
 
 resource "google_pubsub_topic" "devicestatus" {

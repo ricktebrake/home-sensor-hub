@@ -63,7 +63,7 @@ resource "google_container_cluster" "primary" {
   enable_autopilot   = true
   initial_node_count = 1
   vertical_pod_autoscaling {
-    enabled = false
+    enabled = true
   }
 }
 

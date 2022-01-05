@@ -57,9 +57,10 @@ jobs:
         run: |-
           docker build \
             --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" \
+            --file src/main/docker/Dockerfile.native \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
-            -f src/main/docker/Dockerfile.native
+            . \
 
       - name: Publish
         run: |-

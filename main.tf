@@ -67,6 +67,15 @@ resource "google_container_cluster" "primary" {
   }
 }
 
+resource "google_artifact_registry_repository" "container-repository" {
+  provider = google-beta
+
+  location = "europe-west1"
+  repository_id = "container-repository"
+  description = "Docker images artifact repository"
+  format = "DOCKER"
+}
+
 resource "google_pubsub_topic" "devicestatus" {
   name = "devicestatus"
 }

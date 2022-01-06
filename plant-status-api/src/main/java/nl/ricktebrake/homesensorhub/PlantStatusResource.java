@@ -25,14 +25,14 @@ public class PlantStatusResource {
 
     @GET
     @Produces(MediaType.SERVER_SENT_EVENTS)
-    public Multi<Integer> hello() {
+    public Multi<Long> hello() {
 
         log.info("Received request on /hello endpoint");
 
 
 
         return Multi.createFrom().emitter(emitter -> {
-            emitter.emit(10000);
+            emitter.emit(10000L);
 
 //            sensorMeasurements.orderBy("timestamp", Query.Direction.DESCENDING).limit(1).addSnapshotListener((value, error) -> {
 //                if(error != null) {
@@ -48,7 +48,7 @@ public class PlantStatusResource {
             try {
                 QuerySnapshot query = sensorMeasurements.orderBy("timestamp", Query.Direction.DESCENDING).get().get();
                 query.getDocuments().forEach(document -> {
-                    emitter.emit((Integer) document.get("value"));
+                    emitter.emit(document.getLong("value"));
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -1,9 +1,6 @@
 package nl.ricktebrake.homesensorhub;
 
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.*;
 import com.google.cloud.firestore.v1.FirestoreClient;
 import com.google.cloud.firestore.v1.FirestoreSettings;
 import io.quarkus.logging.Log;
@@ -34,10 +31,13 @@ public class PlantStatusResource {
             emitter.emit(10000);
             CollectionReference sensorMeasurements = firestore.collection("moisture-sensor");
             sensorMeasurements.orderBy("timestamp", Query.Direction.DESCENDING).limit(1).addSnapshotListener((value, error) -> {
-                emitter.emit(value.getDocuments()
-                        .stream()
-                        .findFirst()
-                        .map(document -> (Integer) document.getData().get("value")).orElse(100));
+                if(error != null) {
+                    log.error("Error adding listener to query", error);
+                    throw error;
+                }
+                value.getDocuments().stream()
+                        .map(document -> (Integer) document.getData().get("value"))
+                        .forEach(emitter::emit);
             });
         });
     }

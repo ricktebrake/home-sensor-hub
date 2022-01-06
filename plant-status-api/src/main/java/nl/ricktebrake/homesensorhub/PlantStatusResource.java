@@ -1,10 +1,9 @@
 package nl.ricktebrake.homesensorhub;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
-import com.google.cloud.firestore.v1.FirestoreClient;
-import com.google.cloud.firestore.v1.FirestoreSettings;
-import io.quarkus.logging.Log;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.QuerySnapshot;
 import io.smallrye.mutiny.Multi;
 import org.jboss.logging.Logger;
 
@@ -30,32 +29,20 @@ public class PlantStatusResource {
         log.info("Received request on /hello endpoint");
 
 
-
         return Multi.createFrom().emitter(emitter -> {
             emitter.emit(10000L);
-
-//            sensorMeasurements.orderBy("timestamp", Query.Direction.DESCENDING).limit(1).addSnapshotListener((value, error) -> {
-//                if(error != null) {
-//                    log.error("Error adding listener to query", error);
-//                    emitter.complete();
-//                    throw error;
-//                }
-//                value.getDocuments().stream()
-//                        .map(document -> (Integer) document.getData().get("value"))
-//                        .forEach(emitter::emit);
-//            });
             CollectionReference sensorMeasurements = firestore.collection("moisture-sensor");
-            try {
-                QuerySnapshot query = sensorMeasurements.orderBy("timestamp", Query.Direction.DESCENDING).get().get();
-                query.getDocuments().forEach(document -> {
-                    emitter.emit(document.getLong("value"));
-                });
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            emitter.complete();
+            sensorMeasurements.orderBy("timestamp", Query.Direction.DESCENDING).addSnapshotListener((value, error) -> {;
+                if (error != null) {
+                    log.error("Error adding listener to query", error);
+                    emitter.complete();
+                    throw error;
+                }
+                log.info(String.format("New database event"));
+                value.getDocuments().stream()
+                        .map(document -> document.getLong("value"))
+                        .forEach(emitter::emit);
+            });
         });
     }
 }

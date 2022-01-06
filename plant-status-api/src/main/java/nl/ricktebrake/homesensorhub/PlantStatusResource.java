@@ -29,7 +29,7 @@ public class PlantStatusResource {
     public Multi<Integer> hello() {
 
         log.info("Received request on /hello endpoint");
-        
+
         return Multi.createFrom().emitter(emitter -> {
             emitter.emit(10000);
             CollectionReference sensorMeasurements = firestore.collection("moisture-sensor");

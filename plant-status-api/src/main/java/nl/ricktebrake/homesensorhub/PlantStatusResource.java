@@ -40,8 +40,9 @@ public class PlantStatusResource {
                 }
                 log.info(String.format("New database event"));
                 value.getDocuments().stream()
+                        .findFirst()
                         .map(document -> document.getLong("value"))
-                        .forEach(emitter::emit);
+                        .ifPresent(emitter::emit);
             });
         });
     }

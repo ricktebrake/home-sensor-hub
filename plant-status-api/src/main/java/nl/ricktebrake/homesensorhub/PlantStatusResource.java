@@ -33,6 +33,7 @@ public class PlantStatusResource {
             sensorMeasurements.orderBy("timestamp", Query.Direction.DESCENDING).limit(1).addSnapshotListener((value, error) -> {
                 if(error != null) {
                     log.error("Error adding listener to query", error);
+                    emitter.complete();
                     throw error;
                 }
                 value.getDocuments().stream()
